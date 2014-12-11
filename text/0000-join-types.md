@@ -104,10 +104,92 @@ design.
 
 ## General Use
 
-The general use of this feature is best described through a series of short
-programs.
+The general use of this feature is best described through some short examples.
 
-## Interaction with Generics
+`A | B` names a type and can be used anywhere a type is expected.
+
+```rust
+type AorB = A | B;
+```
+
+There is no explicit instantiation syntax for values of join types, instead
+if a binding or value is a join type then any value included in the join type
+can be used to instantiate that join.
+
+```rust
+struct A { x: uint }
+
+let val: A | B = A { x: 8u };
+```
+
+Join types are order-independent, even cross-crate, so `A | B` is the same type
+as `B | A`.
+
+```rust
+let val: A | B = A { x: 8u };
+let val: B | A = val;
+```
+
+You can convert between join types using `as`. `as` can be used to convert
+a join to another join whose types are a superset of the types in the original
+join. `as` can also be used to change the local ordering of a join in cases
+where order becomes important (see Proposal B under "Interaction with Generics").
+
+Joins are *not* converted implicitly.
+
+```rust
+let val: A | B = A { x: 17u };
+let val = val as A | B | C;
+let val = val as B | A | C;
+
+// Error: can't shrink a join using as.
+let val = val as A | B;
+```
+
+Join types are always flattened as much as possible, breaking off at non-join
+types. This means `(A | B) | C` is the same type as `A | B | C`. The only
+exceptions is when `A` and `B` are generics and `A | B` is used as a join - if
+`A` or `B` are instantiated as joins, then those joins are only flattened from
+the perspective of the caller.
+
+### Traits
+
+Joins have the same rules as tuples when it comes to trait implementations -
+you can implement a trait for a join in a crate if the trait originates in
+the crate or if any types in the join originate in the crate.
+
+### Matching
+
+To disambiguate a join, you use `match` with an additional `as $type` clause:
+
+```rust
+let val: A | B | C = ...;
+match val {
+    $pat as A { .. },
+    $pat as B { .. },
+    $pat as C { .. }
+}
+```
+
+As a special case, `_` can be used without type bounds to capture many types,
+since it does not capture a value.
+
+You can also use `if let` and `while let` with the extended `as $type` syntax
+like so:
+
+```rust
+if let $pat as $type = val { .. }
+```
+
+## Grammar
+
+`|` has a lower precedence than the pointer syntax, meaning `&A | B` is
+`(&A) | B)` and `&(A | B)` is needed to get a reference to a join.
+
+This is to avoid weirdness where `&A | B` is a reference to the join but
+`B | &A` is a join with a reference.
+
+## Interaction with Generics (Dealing with Duplicates)
 
 There are several possible designs that reflect how joins interact with
 generics, motivated by issues arising from the possibility of duplicate
@@ -211,7 +293,14 @@ join type, and recognize different ordering annotations associated with them.
 How do ordering annotations work with "flattening", i.e. how do we match `A`
 in `(A | B) | C` where `A`, `B`, and `C` can unify.
 
-## Dealing with Ambiguity
+### Alternative Syntax for Proposal B:
+
+We could use `as 0` or `as .0` or any other syntax for ordering.
+
+## Interaction with Type Inference
+
+Types are not ever inferred to be join types - if you want a join type, you
+have to explicitly request it somewhere.
 
 ## Memory Representation
 
