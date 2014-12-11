@@ -350,6 +350,8 @@ strongly discouraged as a code smell).
 Type hints are not mandatory when disambiguating a join, if the compiler
 can tell the type from the pattern.
 
+Joins are not flattened at all.
+
 # Unresolved questions
 
 Should joins come with subtyping and conversions, i.e. should there be an
