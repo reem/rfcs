@@ -215,7 +215,13 @@ in `(A | B) | C` where `A`, `B`, and `C` can unify.
 
 ## Memory Representation
 
-### Conversions and Coercions
+The in-memory representation of a join is the same as an enum with the
+equivalent members and number of variants. The ordering of the variants of a
+join (i.e. which discriminant value matches which variant) is unspecified.
+
+Of course, the compile must still be able to decide which variant a join is, so
+a strategy for compiling joins and deciding their order that is viable even in
+cross-crate cases is discussed in the "Compilation Strategy" section.
 
 ## Compilation Strategy
 
