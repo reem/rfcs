@@ -225,6 +225,15 @@ cross-crate cases is discussed in the "Compilation Strategy" section.
 
 ## Compilation Strategy
 
+Even though the order of variants is unspecified, the compiler must know the
+order of variants. Additionally, the order of variants of joins of the same
+types must be *consistent* between crates, even when each crate is compiled
+completely separately.
+
+Given this constraint, the best solution the author can come up with is to sort
+the variants of the join by their `TypeId`, or some other cross-crate unique
+piece of data, and use that as the ordering of variants.
+
 # Drawbacks
 
 It's a highly complex feature that introduces new forms of implicit behavior
