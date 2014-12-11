@@ -227,16 +227,18 @@ cross-crate cases is discussed in the "Compilation Strategy" section.
 
 # Drawbacks
 
-It's a highly complex feature that introduces new forms of subtyping and a
-relatively complicated compilation strategy, adding complexity to the compiler
-and language.
+It's a highly complex feature that introduces new forms of implicit behavior
+and a relatively complicated compilation strategy, adding complexity to the
+compiler and language.
 
 It doesn't enable anything that was actually impossible previously, just makes
-certain cases easier.
+certain cases easier or much shorter.
 
 # Alternatives
 
-What other designs have been considered? What is the impact of not doing this?
+Don't do this.
+
+Create a different syntax for implicit instantiation of regular enums.
 
 # Unresolved questions
 
