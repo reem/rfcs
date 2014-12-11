@@ -203,11 +203,12 @@ struct Nothing;
 type Optional<T> = T | Nothing;
 ```
 
-### Proposal A: Forbid possibly-unifying types in Joins
+### Proposal A: Forbid possibly-unifying types
 
-Proposal A outright bans the creation of Joins where one type may unify
+Proposal A outright bans the creation of joins where one type may unify
 with another, for instance `<A, B> A | B`. In the future, if we grow type
-equality or unification bounds, such a join may be allowed as `<A, B> A | B where A != B`.
+equality or unification bounds, such a join may be allowed as
+`<A, B> A | B where A != B`.
 
 #### Pros:
 
@@ -269,6 +270,8 @@ additional annotations.
 If `T` can be `Nothing`, then you can no longer match using the `as T` syntax,
 you must instead use an ordering annotation, which takes the form `as T.0` to
 say you'd like to match against the first (0-indexed) variant whose type is T.
+
+Additionally you can construct a `T | T` using `val as T.0` or `val as T.1`.
 
 These ordering annotations are *always* relative to the local definition of the
 join, i.e. even though `A | B` is the same as `B | A`, the ordering information
