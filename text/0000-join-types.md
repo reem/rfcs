@@ -146,11 +146,13 @@ let val = val as B | A | C;
 let val = val as A | B;
 ```
 
-Join types are always flattened as much as possible, breaking off at non-join
-types. This means `(A | B) | C` is the same type as `A | B | C`. The only
-exceptions is when `A` and `B` are generics and `A | B` is used as a join - if
-`A` or `B` are instantiated as joins, then those joins are only flattened from
-the perspective of the caller.
+Join types are *not* flattened. Why not? Join flattening introduces highly
+complex cases into the compiler for cross-crate joins and also makes joins
+interactions with generics very very complex and hard to reason about.
+
+There are also *advantages* to have non-flattened Joins, for instance, given
+the above `Json` example, we can match on `JsonString` as a variant, rather
+than needing to match on `&'static str` and `String` separately.
 
 ### Traits
 
@@ -268,10 +270,11 @@ Matching against `Optional<T>` where `T` cannot be `Nothing` requires no
 additional annotations.
 
 If `T` can be `Nothing`, then you can no longer match using the `as T` syntax,
-you must instead use an ordering annotation, which takes the form `as T.0` to
-say you'd like to match against the first (0-indexed) variant whose type is T.
+you must instead use an ordering annotation, which takes the form `as .0` to
+say you'd like to match against the first (0-indexed) variant - its type is
+inferred.
 
-Additionally you can construct a `T | T` using `val as T.0` or `val as T.1`.
+Additionally you can construct a `T | T` using `val as .0` or `val as .1`.
 
 These ordering annotations are *always* relative to the local definition of the
 join, i.e. even though `A | B` is the same as `B | A`, the ordering information
@@ -290,15 +293,6 @@ it is likely that existing infrastructure can be reused for this check.
 
 The compiler has to track the ordering of various definitions of the "same"
 join type, and recognize different ordering annotations associated with them.
-
-### Unanswered Questions with Proposal B:
-
-How do ordering annotations work with "flattening", i.e. how do we match `A`
-in `(A | B) | C` where `A`, `B`, and `C` can unify.
-
-### Alternative Syntax for Proposal B:
-
-We could use `as 0` or `as .0` or any other syntax for ordering.
 
 ## Interaction with Type Inference
 
@@ -349,8 +343,6 @@ strongly discouraged as a code smell).
 
 Type hints are not mandatory when disambiguating a join, if the compiler
 can tell the type from the pattern.
-
-Joins are not flattened at all.
 
 # Unresolved questions
 
