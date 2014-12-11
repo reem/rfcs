@@ -341,6 +341,15 @@ Don't do this.
 
 Create a different syntax for implicit instantiation of regular enums.
 
+Allow joins to be introduced by type inference.
+
+Use a totally different strategy for dealing with duplicates as a result
+of generics or even types such as `uint | uint` (though the latter would be
+strongly discouraged as a code smell).
+
+Type hints are not mandatory when disambiguating a join, if the compiler
+can tell the type from the pattern.
+
 # Unresolved questions
 
 Should joins come with subtyping and conversions, i.e. should there be an
