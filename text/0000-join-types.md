@@ -225,12 +225,6 @@ cross-crate cases is discussed in the "Compilation Strategy" section.
 
 ## Compilation Strategy
 
-## Parsing
-
-### Basics
-
-### Dealing with Ambiguities
-
 # Drawbacks
 
 It's a highly complex feature that introduces new forms of subtyping and a
