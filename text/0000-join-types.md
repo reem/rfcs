@@ -231,8 +231,6 @@ cross-crate cases is discussed in the "Compilation Strategy" section.
 
 ### Dealing with Ambiguities
 
-## Subtyping Relationships
-
 # Drawbacks
 
 It's a highly complex feature that introduces new forms of subtyping and a
@@ -248,5 +246,7 @@ What other designs have been considered? What is the impact of not doing this?
 
 # Unresolved questions
 
-What parts of the design are still TBD?
+Should joins come with subtyping and conversions, i.e. should there be an
+implicit conversion of a join of types `Ts` to a join of types `Ts'` if `Ts` is
+a subtype of `Ts'`?
 
