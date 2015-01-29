@@ -6,7 +6,7 @@
 
 <!-- FIXME: Expand with details -->
 Add a new feature called extension impls for the purpose of providing
-inherent-like impls on types from foreign crates.
+inherent-like impls on types from foreign crates, based on C#'s extension methods mechanism.
 
 # Motivation
 
